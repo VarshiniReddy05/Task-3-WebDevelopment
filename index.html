@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fun Interactive Page</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    .question {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #quizResult {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .api-data {
+      margin-top: 15px;
+      background-color: #f1f1f1;
+      padding: 12px;
+      border-radius: 8px;
+      font-style: italic;
+    }
+
+    .carousel {
+      text-align: center;
+    }
+
+    .carousel img {
+      width: 100%;
+      max-height: 300px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .carousel-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 500px) {
+      button {
+        font-size: 0.9rem;
+      }
+
+      .carousel-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fun Interactive Page 🎉</h1>
+
+    <!-- Quiz Section -->
+    <section>
+      <div class="question">What is 2 + 2?</div>
+      <label><input type="radio" name="answer" value="3"> 3</label>
+      <label><input type="radio" name="answer" value="4"> 4</label>
+      <label><input type="radio" name="answer" value="5"> 5</label>
+      <button onclick="checkAnswer()">Submit Answer</button>
+      <div id="quizResult"></div>
+    </section>
+
+    <!-- Joke Section -->
+    <section>
+      <button onclick="fetchJoke()">Get a Joke 😂</button>
+      <div id="jokeBox" class="api-data">Click the button to laugh!</div>
+    </section>
+
+    <!-- Image Carousel -->
+    <section class="carousel">
+      <img id="carouselImage" src="https://picsum.photos/id/1015/600/400" alt="Carousel Image" />
+      <div class="carousel-buttons">
+        <button onclick="prevImage()">Previous</button>
+        <button onclick="nextImage()">Next</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Quiz Logic
+    function checkAnswer() {
+      const answers = document.getElementsByName('answer');
+      let selected = null;
+      answers.forEach((radio) => {
+        if (radio.checked) selected = radio.value;
+      });
+
+      const result = document.getElementById('quizResult');
+      if (!selected) {
+        result.textContent = "Please select an answer.";
+        result.style.color = "#dc3545";
+      } else if (selected === "4") {
+        result.textContent = "Correct! 🎉";
+        result.style.color = "#28a745";
+      } else {
+        result.textContent = "Oops! Try again.";
+        result.style.color = "#dc3545";
+      }
+    }
+
+    // Joke API Logic
+    function fetchJoke() {
+      fetch("https://v2.jokeapi.dev/joke/Any?safe-mode&type=single")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("jokeBox").textContent = data.joke || "Couldn't get a joke!";
+        })
+        .catch(() => {
+          document.getElementById("jokeBox").textContent = "Failed to fetch joke.";
+        });
+    }
+
+    // Carousel Logic
+    const images = [
+      "https://picsum.photos/id/1015/600/400",
+      "https://picsum.photos/id/1016/600/400",
+      "https://picsum.photos/id/1018/600/400",
+      "https://picsum.photos/id/1020/600/400",
+      "https://picsum.photos/id/1024/600/400"
+    ];
+    let currentIndex = 0;
+
+    function showImage(index) {
+      document.getElementById("carouselImage").src = images[index];
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % images.length;
+      showImage(currentIndex);
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      showImage(currentIndex);
+    }
+  </script>
+</body>
+</html>
